@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Фракталы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <canvas id="drawfrac" width="800px" height="800px"></canvas>
+
+    <table class="table">
+        <tr>
+            <td class="fracprop">
+                <div class="title">Фрактал</div>
+                Итерации фрактала:
+                <select id="fracdepth">
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9" selected>9</option>
+                    <option value="-1">Своё число</option>
+                </select>
+                <a id="iterator">Введите число итераций: <input id="fracit" name="fcolor" type="text" placeholder="3" value="3"></a>
+                <br>
+                <a>Длина линии: <input id="fracwidth" name="fwidth" type="text" value="3"></a>
+
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>
