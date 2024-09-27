@@ -142,7 +142,7 @@ inputElem.addEventListener("change", function () {
     // Проверяем, является ли введенное значение числом
     if (!isNaN(inputElem.value) && inputElem.value !== "") {
         // Преобразуем в число и обновляем количество итераций
-        if(Number(inputElem.value) >=0 && Number(inputElem.value) <= 11) {
+        if(Number(inputElem.value) >= 0 && Number(inputElem.value) <= 11) {
             iterations = Number(inputElem.value);
             iteratorWarn.style.display = "none";
             updateAndRedraw(); // Перерисовываем фрактал
@@ -157,7 +157,7 @@ inputElem.addEventListener("change", function () {
 inputWidth.addEventListener("change", function () {
     if (!isNaN(inputWidth.value) && inputWidth.value !== "") {
         // Преобразуем в число и обновляем количество итераций
-        if(Number(inputWidth.value) >=0 && Number(inputWidth.value) <= 15) {
+        if(Number(inputWidth.value) >= 0 && Number(inputWidth.value) <= 15) {
             length = Number(inputWidth.value);
             widthWarn.style.display = "none";
             updateAndRedraw(); // Перерисовываем фрактал
@@ -165,6 +165,30 @@ inputWidth.addEventListener("change", function () {
             widthWarn.style.display = "block";
         }
     }
+});
+
+// Обработчик события прокрутки мыши для изменения масштаба
+canvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    // Позиция мыши на холсте
+    let mouseX = e.offsetX;
+    let mouseY = e.offsetY;
+
+    // Переводим координаты мыши на канвасе в масштабированные координаты
+    let prevScale = scale;
+    let zoomFactor = 1.1; // Коэффициент увеличения/уменьшения
+    if (e.deltaY < 0) {
+        scale *= zoomFactor; // Увеличиваем масштаб
+    } else {
+        scale /= zoomFactor; // Уменьшаем масштаб
+    }
+
+    // Скорректируем смещение, чтобы зум происходил относительно точки под мышью
+    offsetX = mouseX / scale + (offsetX - mouseX / prevScale);
+    offsetY = mouseY / scale + (offsetY - mouseY / prevScale);
+
+    // Перерисовка с новым масштабом
+    redraw();
 });
 
 // Проверяем видимость и перерисовываем при загрузке страницы
