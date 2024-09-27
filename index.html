@@ -8,7 +8,7 @@
 <body>
 
 <div class="container">
-    <canvas id="drawfrac" width="800px" height="800px"></canvas>
+    <canvas id="drawfrac" width="1800" height="750px"></canvas>
 
     <table class="table">
         <tr>
@@ -21,9 +21,13 @@
                     <option value="9" selected>9</option>
                     <option value="-1">Своё число</option>
                 </select>
-                <a id="iterator">Введите число итераций: <input id="fracit" name="fcolor" type="text" placeholder="3" value="3"></a>
+                <a id="iterator">Введите число итераций: <input id="fracit" name="fcolor" type="text" placeholder="Число итераций"></a>
                 <br>
-                <a>Длина линии: <input id="fracwidth" name="fwidth" type="text" value="3"></a>
+                <a id="iterator_warn">Введено неверное число итераций, допустимое число от 0 до 11 (включительно)</a>
+                <br>
+                <a>Длина линии: <input id="fracwidth" name="fwidth" type="text" value="3" placeholder="Длина линии"></a>
+                <br>
+                <a id="width_warn">Введена неверная длина линии, допустимое число от 0 до 15 (включительно)</a>
 
             </td>
         </tr>

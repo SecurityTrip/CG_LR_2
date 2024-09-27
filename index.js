@@ -6,7 +6,14 @@ let selectElem = document.getElementById("fracdepth");
 let iteratorDiv = document.getElementById("iterator");
 let inputElem = document.getElementById("fracit");
 let inputWidth = document.getElementById("fracwidth");
-let iterations = Number(selectElem.value); // Инициализируем количеством итераций по умолчанию
+
+let iteratorWarn = document.getElementById("iterator_warn");
+iteratorWarn.style.display = "none";
+let widthWarn = document.getElementById("width_warn");
+widthWarn.style.display = "none";
+
+// Инициализируем количеством итераций по умолчанию
+let iterations = Number(selectElem.value);
 
 // Параметры фрактала
 let axiom = "F+F+F";
@@ -28,6 +35,7 @@ function toggleIteratorVisibility() {
     if (selectElem.value === "-1") {
         iteratorDiv.style.display = "block"; // Показываем div для ввода числа
     } else {
+        iteratorWarn.style.display = "none";
         iteratorDiv.style.display = "none"; // Скрываем div
         iterations = Number(selectElem.value); // Обновляем количество итераций
         updateAndRedraw(); // Перерисовываем фрактал
@@ -134,8 +142,14 @@ inputElem.addEventListener("change", function () {
     // Проверяем, является ли введенное значение числом
     if (!isNaN(inputElem.value) && inputElem.value !== "") {
         // Преобразуем в число и обновляем количество итераций
-        iterations = Number(inputElem.value);
-        updateAndRedraw(); // Перерисовываем фрактал
+        if(Number(inputElem.value) >=0 && Number(inputElem.value) <= 11) {
+            iterations = Number(inputElem.value);
+            iteratorWarn.style.display = "none";
+            updateAndRedraw(); // Перерисовываем фрактал
+        } else {
+            iteratorWarn.style.display = "block";
+        }
+
     }
 });
 
@@ -143,8 +157,13 @@ inputElem.addEventListener("change", function () {
 inputWidth.addEventListener("change", function () {
     if (!isNaN(inputWidth.value) && inputWidth.value !== "") {
         // Преобразуем в число и обновляем количество итераций
-        length = Number(inputWidth.value);
-        updateAndRedraw(); // Перерисовываем фрактал
+        if(Number(inputWidth.value) >=0 && Number(inputWidth.value) <= 15) {
+            length = Number(inputWidth.value);
+            widthWarn.style.display = "none";
+            updateAndRedraw(); // Перерисовываем фрактал
+        } else {
+            widthWarn.style.display = "block";
+        }
     }
 });
 
