@@ -10,7 +10,7 @@ let axiom = "F+F+F";
 let rule = "F-F+F";
 let angle = (2 * Math.PI) / 3; // Угол поворота (120 градусов)
 
-let offsetX = canvas.width / 4; // Начальное смещение по X
+let offsetX = canvas.width / 1.5; // Начальное смещение по X
 let offsetY = canvas.height / 2; // Начальное смещение по Y
 
 // Функция генерации L-системы для текущей итерации
