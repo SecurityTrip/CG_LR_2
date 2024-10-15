@@ -1,55 +1,23 @@
-let canvas = document.getElementById("drawfrac");
-let ctx = canvas.getContext("2d");
+let canvas = document.getElementById('drawfrac');
+let ctx = canvas.getContext('2d');
 
-// Получаем ссылки на элементы
-let selectElem = document.getElementById("fracdepth");
-let iteratorDiv = document.getElementById("iterator");
-let inputElem = document.getElementById("fracit");
-let inputWidth = document.getElementById("fracwidth");
+let iterations = 0; // Текущая итерация (шаг)
+let maxIterations = 10; // Максимальное количество итераций (можно изменить)
+let scale = 1; // Масштаб
 
-let iteratorWarn = document.getElementById("iterator_warn");
-iteratorWarn.style.display = "none";
-let widthWarn = document.getElementById("width_warn");
-widthWarn.style.display = "none";
-
-// Инициализируем количеством итераций по умолчанию
-let iterations = Number(selectElem.value);
-
-// Параметры фрактала
+// Параметры для кривой Коха
 let axiom = "F+F+F";
 let rule = "F-F+F";
 let angle = (2 * Math.PI) / 3; // Угол поворота (120 градусов)
-let length = Number(inputWidth.value); // Длина шага
 
-// Переменные для управления положением фрактала
-let offsetX = canvas.width / 2; // Начальная позиция по X
-let offsetY = canvas.height / 2; // Начальная позиция по Y
-let scale = 1; // Коэффициент масштабирования
+let offsetX = canvas.width / 4; // Начальное смещение по X
+let offsetY = canvas.height / 2; // Начальное смещение по Y
 
-// Переменные для отслеживания движения мыши
-let isDragging = false;
-let startX, startY;
-
-// Функция для управления видимостью и установкой итераций
-function toggleIteratorVisibility() {
-    if (selectElem.value === "-1") {
-        iteratorDiv.style.display = "block"; // Показываем div для ввода числа
-    } else {
-        iteratorWarn.style.display = "none";
-        iteratorDiv.style.display = "none"; // Скрываем div
-        iterations = Number(selectElem.value); // Обновляем количество итераций
-        updateAndRedraw(); // Перерисовываем фрактал
-    }
-}
-
-// Обработчик на изменение значения select
-selectElem.addEventListener("change", toggleIteratorVisibility);
-
-// Функция для генерации строки фрактала по правилам
+// Функция генерации L-системы для текущей итерации
 function generateLSystem(axiom, rule, iterations) {
     let result = axiom;
     for (let i = 0; i < iterations; i++) {
-        let newResult = "";
+        let newResult = '';
         for (let char of result) {
             if (char === 'F') {
                 newResult += rule;
@@ -62,134 +30,72 @@ function generateLSystem(axiom, rule, iterations) {
     return result;
 }
 
-// Функция для рисования фрактала
-function drawLSystem(ctx, instructions, angle, length) {
-    let x = offsetX; // Начальная позиция с учетом смещения
-    let y = offsetY;
-    let currentAngle = 45;
+// Функция рисования пикселя
+function drawPixel(x, y) {
+    ctx.fillRect(x, y, 1, 1); // Рисуем пиксель 1x1
+}
 
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+// Функция отрисовки фрактала Коха с использованием пикселей
+function drawKochFractal(instructions, length) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Очищаем холст
+
+    let x = offsetX; // Начальная позиция
+    let y = offsetY;
+    let currentAngle = 0; // Направление движения
 
     for (let command of instructions) {
         if (command === 'F') {
-            x += length * Math.cos(currentAngle);
-            y += length * Math.sin(currentAngle);
-            ctx.lineTo(x, y);
+            // Вычисляем новые координаты
+            let newX = x + length * Math.cos(currentAngle) * scale;
+            let newY = y + length * Math.sin(currentAngle) * scale;
+
+            // Рисуем пиксель по траектории движения
+            let dx = newX - x;
+            let dy = newY - y;
+            let steps = Math.max(Math.abs(dx), Math.abs(dy)); // Вычисляем количество шагов для отрисовки линии через пиксели
+
+            for (let i = 0; i <= steps; i++) {
+                let pixelX = x + (dx * i / steps);
+                let pixelY = y + (dy * i / steps);
+                drawPixel(pixelX, pixelY); // Рисуем пиксель
+            }
+
+            // Обновляем координаты
+            x = newX;
+            y = newY;
         } else if (command === '+') {
-            currentAngle += angle;
+            currentAngle += angle; // Поворачиваем на +60 градусов
         } else if (command === '-') {
-            currentAngle -= angle;
+            currentAngle -= angle; // Поворачиваем на -60 градусов
         }
     }
-
-    ctx.stroke();
 }
 
-// Функция для перерисовки фрактала
-function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Очистка холста
-    ctx.save(); // Сохранение текущего состояния контекста
-    ctx.scale(scale, scale); // Установка масштаба
-    drawLSystem(ctx, instructions, angle, length); // Рисование фрактала
-    ctx.restore(); // Восстановление состояния контекста
-}
-
-// Функция для обновления строки инструкций и перерисовки фрактала
+// Функция для обновления и отрисовки следующего шага
 function updateAndRedraw() {
-    instructions = generateLSystem(axiom, rule, iterations); // Генерация строки фрактала
-    redraw(); // Перерисовка
+    let instructions = generateLSystem(axiom, rule, iterations); // Генерируем строку L-системы
+    let lineLength = 10; // Длина линии
+    drawKochFractal(instructions, lineLength); // Рисуем фрактал
 }
 
-// Генерация строки фрактала и начальная отрисовка
-let instructions = generateLSystem(axiom, rule, iterations);
-redraw(); // Начальная отрисовка фрактала
-
-// Обработчик события нажатия кнопки мыши
-canvas.addEventListener("mousedown", function (e) {
-    isDragging = true;
-    startX = e.offsetX;
-    startY = e.offsetY;
-});
-
-// Обработчик события отпускания кнопки мыши
-canvas.addEventListener("mouseup", function (e) {
-    isDragging = false;
-});
-
-// Обработчик события перемещения мыши
-canvas.addEventListener("mousemove", function (e) {
-    if (isDragging) {
-        // Вычисление смещения
-        let dx = e.offsetX - startX;
-        let dy = e.offsetY - startY;
-
-        // Обновление положения фрактала с учетом масштаба
-        offsetX += dx / scale;
-        offsetY += dy / scale;
-
-        // Обновление начальных координат для следующего смещения
-        startX = e.offsetX;
-        startY = e.offsetY;
-
-        // Перерисовка фрактала с новыми координатами
-        redraw();
+// Обработчик для кнопки "Следующий шаг"
+document.getElementById('nextStep').addEventListener('click', function () {
+    if (iterations < maxIterations) {
+        iterations++;
+        updateAndRedraw(); // Перерисовываем фрактал на каждом шаге
     }
 });
 
-// Обработчик события изменения в поле итераций
-inputElem.addEventListener("change", function () {
-    // Проверяем, является ли введенное значение числом
-    if (!isNaN(inputElem.value) && inputElem.value !== "") {
-        // Преобразуем в число и обновляем количество итераций
-        if(Number(inputElem.value) >= 0 && Number(inputElem.value) <= 11) {
-            iterations = Number(inputElem.value);
-            iteratorWarn.style.display = "none";
-            updateAndRedraw(); // Перерисовываем фрактал
-        } else {
-            iteratorWarn.style.display = "block";
-        }
-
-    }
+// Обработчики для кнопок масштабирования
+document.getElementById('zoomIn').addEventListener('click', function () {
+    scale *= 1.2; // Увеличиваем масштаб
+    updateAndRedraw(); // Перерисовываем фрактал
 });
 
-// Обработчик события изменения в поле длины
-inputWidth.addEventListener("change", function () {
-    if (!isNaN(inputWidth.value) && inputWidth.value !== "") {
-        // Преобразуем в число и обновляем количество итераций
-        if(Number(inputWidth.value) >= 0 && Number(inputWidth.value) <= 15) {
-            length = Number(inputWidth.value);
-            widthWarn.style.display = "none";
-            updateAndRedraw(); // Перерисовываем фрактал
-        } else {
-            widthWarn.style.display = "block";
-        }
-    }
+document.getElementById('zoomOut').addEventListener('click', function () {
+    scale /= 1.2; // Уменьшаем масштаб
+    updateAndRedraw(); // Перерисовываем фрактал
 });
 
-// Обработчик события прокрутки мыши для изменения масштаба
-canvas.addEventListener("wheel", function (e) {
-    e.preventDefault();
-    // Позиция мыши на холсте
-    let mouseX = e.offsetX;
-    let mouseY = e.offsetY;
-
-    // Переводим координаты мыши на канвасе в масштабированные координаты
-    let prevScale = scale;
-    let zoomFactor = 1.1; // Коэффициент увеличения/уменьшения
-    if (e.deltaY < 0) {
-        scale *= zoomFactor; // Увеличиваем масштаб
-    } else {
-        scale /= zoomFactor; // Уменьшаем масштаб
-    }
-
-    // Скорректируем смещение, чтобы зум происходил относительно точки под мышью
-    offsetX = mouseX / scale + (offsetX - mouseX / prevScale);
-    offsetY = mouseY / scale + (offsetY - mouseY / prevScale);
-
-    // Перерисовка с новым масштабом
-    redraw();
-});
-
-// Проверяем видимость и перерисовываем при загрузке страницы
-toggleIteratorVisibility();
+// Начальная отрисовка
+updateAndRedraw();

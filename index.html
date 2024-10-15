@@ -2,39 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Фракталы</title>
+    <title>Фрактал Коха</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <canvas id="drawfrac" width="1800px" height="750px"></canvas>
-
-    <table class="table">
-        <tr>
-            <td class="fracprop">
-                <div class="title">Фрактал</div>
-                Итерации фрактала:
-                <select id="fracdepth">
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9" selected>9</option>
-                    <option value="-1">Своё число</option>
-                </select>
-                <a id="iterator">Введите число итераций: <input id="fracit" name="fcolor" type="text" placeholder="Число итераций"></a>
-                <br>
-                <a id="iterator_warn">Введено неверное число итераций, допустимое число от 0 до 11 (включительно)</a>
-                <br>
-                <a>Длина линии: <input id="fracwidth" name="fwidth" type="text" value="3" placeholder="Длина линии"></a>
-                <br>
-                <a id="width_warn">Введена неверная длина линии, допустимое число от 0 до 15 (включительно)</a>
-
-            </td>
-        </tr>
-
-    </table>
+<canvas id="drawfrac" width="1000" height="500"></canvas>
+<div class="controls">
+    <button id="nextStep">Следующий шаг</button>
+    <button id="zoomIn">Приблизить</button>
+    <button id="zoomOut">Отдалить</button>
 </div>
 
+<!-- Подключаем JavaScript -->
 <script src="index.js"></script>
 
 </body>
