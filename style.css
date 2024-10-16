@@ -1,35 +1,4 @@
-.container {
-    width: 680px;
-    margin: 20px;
-}
-#drawfrac {
+#drawFrac {
     margin: auto;
     border: 2px solid black;
-}
-
-.table {
-    width: 100%;
-    border-spacing: 5px;
-    line-height: 170%;
-}
-.baseprop, .fracprop {
-    width: 50%;
-    background-color: #F0F0C0;
-    border: 1px solid black;
-    padding: 0 10px;
-    vertical-align: top;
-}
-.title {
-    text-align: center;
-    font-weight: bold;
-}
-
-#iterator_warn{
-    color: red;
-    font-weight: bold;
-}
-
-#width_warn{
-    color: red;
-    font-weight: bold;
 }
